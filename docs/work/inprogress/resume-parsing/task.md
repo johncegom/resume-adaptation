@@ -4,15 +4,15 @@ This document tracks all implementation tasks for the resume ingestion and parsi
 
 ## Task List
 
-- [ ] RAFT0001: Initialize Go module and setup project dependencies
+- [x] RAFT0001: Initialize Go module and setup project dependencies
   - **Acceptance Criteria**: `go.mod` is created, `google.golang.org/genai` is added as a dependency, and the environment is ready.
   - **Dependencies**: None
 
-- [ ] RAFT0002: Define Resume models and structures
+- [x] RAFT0002: Define Resume models and structures
   - **Acceptance Criteria**: Go structs for Resume, WorkExperience, Education, and Projects are defined in `internal/parser/models.go` with JSON/YAML tags.
   - **Dependencies**: RAFT0001
 
-- [ ] RAFT0003: Implement local plaintext reader
+- [x] RAFT0003: Implement local plaintext reader
   - **Acceptance Criteria**: Service reads local `.txt` and `.md` files, providing path validation and basic formatting.
   - **Dependencies**: RAFT0002
 

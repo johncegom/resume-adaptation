@@ -4,6 +4,7 @@ package parser
 type Resume struct {
 	Name       string           `json:"name"`
 	Summary    string           `json:"summary"`
+	RawContent string           `json:"raw_content,omitempty"`
 	Experience []WorkExperience `json:"experience"`
 	Education  []EducationInfo  `json:"education"`
 	Projects   []ProjectInfo    `json:"projects"`
