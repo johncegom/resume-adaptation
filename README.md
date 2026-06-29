@@ -23,7 +23,7 @@ A powerful command-line tool designed to dynamically adapt a candidate's resume 
 ## Getting Started
 
 ### Entry Point
-- The primary entry point is located at [cmd/cli/main.go](file:///D:/Developer/PersonalProject/resume-adaptation/cmd/cli/main.go).
+- The primary entry point is located at [cmd/cli/main.go](file:///C:/Users/Admin/Data/Developer/PersonalProject/resume-adaptation/cmd/cli/main.go).
 
 ### Directory Layout
 ```text
@@ -34,3 +34,23 @@ A powerful command-line tool designed to dynamically adapt a candidate's resume 
 ├── AGENTS.md             # Developer Rules and Project Context
 └── README.md             # Project Description and Usage
 ```
+
+## Developer Workflows
+
+This project uses [Task](https://taskfile.dev) to automate development workflows.
+
+### Available Tasks
+
+Run `task --list` to view all defined tasks. Below is a summary of the available commands:
+
+- `task build`: Compiles the project binary to `bin/resume-adaptation` (or `bin/resume-adaptation.exe` on Windows).
+- `task run`: Executes the CLI application in development mode. Pass CLI arguments using `CLI_ARGS`, for example:
+  ```bash
+  task run -- CLI_ARGS="--help"
+  ```
+- `task test`: Runs all unit and integration tests with race detection (automatically falls back to standard tests if race detection is unsupported in the current environment).
+- `task lint`: Runs static analysis check using `golangci-lint`.
+- `task fmt`: Formats all Go source files using `gofmt` and `goimports`.
+- `task tidy`: Cleans up and synchronizes Go module dependencies in `go.mod`.
+- `task clean`: Discards build outputs (e.g., the `bin/` directory) and temporary test/profile files (`*.prof`, `*.test`, `*.out`).
+- `task setup`: Installs developer tool dependencies (e.g., `goimports`).

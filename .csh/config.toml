@@ -1,0 +1,4 @@
+# Configuration for context-storehouse workspace
+prefix = "RAFT"
+format = "0001"
+update_url = "https://context-storehouse.vercel.app"

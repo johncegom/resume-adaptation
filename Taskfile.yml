@@ -1,0 +1,49 @@
+version: '3'
+
+vars:
+  EXE: '{{if eq OS "windows"}}.exe{{else}}{{end}}'
+
+tasks:
+  build:
+    desc: Compiles the project binary to bin/resume-adaptation
+    cmds:
+      - go build -o bin/resume-adaptation{{.EXE}} cmd/cli/main.go
+
+  run:
+    desc: Executes the application in development mode
+    cmds:
+      - go run cmd/cli/main.go {{.CLI_ARGS}}
+
+  test:
+    desc: Runs unit and integration tests with race detection
+    cmds:
+      - go test -v -race ./... || go test -v ./...
+
+  lint:
+    desc: Runs golangci-lint static analysis
+    cmds:
+      - golangci-lint run ./...
+
+  fmt:
+    desc: Formats the code using gofmt and goimports
+    cmds:
+      - gofmt -s -w .
+      - cmd: goimports -w .
+        ignore_error: true
+
+  tidy:
+    desc: Cleans up and synchronizes dependencies in go.mod
+    cmds:
+      - go mod tidy
+
+  clean:
+    desc: Discards temporary build outputs and profiles
+    cmds:
+      - go clean -cache -testcache
+      - rm -rf bin
+      - rm -f *.prof *.test *.out
+
+  setup:
+    desc: Installs developer tool dependencies (goimports)
+    cmds:
+      - go install golang.org/x/tools/cmd/goimports@latest

@@ -35,8 +35,8 @@ This file contains the **Rules and guidelines** for humans and LLMs working in t
 1. **Scope Detection**: At start of every task/planning phase, explicitly declare target languages, paths, or sub-systems intended to be created, modified, or affected.
 2. **Dynamic Load**: If scope matches a rule below, immediately load the specified orchestrator skill. Use it to lazily load sub-skills (e.g., loading testing skills only during test execution). Do not load statically.
 
-#### Go / Golang CLI
-- **Trigger**: Scope includes path `cmd/` or extension `*.go` or `go.mod` (regardless of current file existence).
+#### Go Rule
+- **Trigger**: Scope includes path `cmd/cli/`, `internal/adaptation/`, `internal/parser/`, `internal/ui/`, or extension `.go` (regardless of current file existence).
 - **Action**: Invoke `golang-how-to`.
 
 ## General Guidelines (Stack-Agnostic)
@@ -50,7 +50,7 @@ This file contains the **Rules and guidelines** for humans and LLMs working in t
   2. `planning`: Active design phase. Agent writes `plan.md`, `task.md`, and `test.md` inside this directory.
   3. `ready`: Approved backlog. Transitioned **automatically** by the agent the moment all planning documents are completed and written. Signifies the design is locked and the feature is ready to be picked up.
   4. `inprogress`: Active development. Moved here **only** when the human gives an explicit command to start implementation or assigns a specific task ID to execute. Triggers the TDD loop.
-  5. `completed`: Production-ready. Moved here only after all tasks are completed (`- [x]`) and final validation passes.
+  5. `completed`: Production-ready. Moved here only after all tasks inside `task.md` are marked complete (`- [x]`), the `csh task complete` routines have run, and the **Feature Regression & Safety Guardrails** successfully pass.
 
   ### Core Artifacts (Per Feature Folder)
   - `plan.md`: Technical design document (architecture, mermaid graphs, decisions). Prose-only; **no task status checkboxes**. References task IDs inline.
@@ -67,8 +67,8 @@ Work is strictly divided into two distinct, human-controlled operational phases:
 - Clarity over cleverness.
 - Small, reversible steps.
 - Follow TDD for code edits.
-- **Minimum Code Philosophy:** Write the minimum code necessary to make the current test case pass. Do not write code or features that are not yet covered by an active failing test case.
-- **Strict TDD Flow for Code Edits:** Apply this as a loop for each subtask first (or per-test if a subtask is too large):
+- **Minimum Code Philosophy**: Write the minimum code necessary to make the current test case pass. Do not write code or features that are not yet covered by an active failing test case.
+- **Strict TDD Flow for Code Edits**: Apply this as a loop for each subtask first (or per-test if a subtask is too large):
   1. Propose and write test cases first as placeholders with an explanatory comment and a deliberate failing assertion stating it is "not implemented yet".
   2. **MUST** iterate through those test cases one-by-one:
      a. Write actual test implementation (replacing placeholder assertion with real logic).
@@ -92,11 +92,27 @@ Work is strictly divided into two distinct, human-controlled operational phases:
 - **Keep Setup Up-to-Date**: If a change adds, modifies, or deletes configuration flags, environment variables, or schema definitions, update both the code and the corresponding documentation or template files (e.g., `.env.example`, setup guides) in the same step.
 
 ### Validation Constraint
-- **Universal Validation Rules**: To ensure the system is production-grade at both Feature (Epic) and Task (Subtask) levels:
+
+[CONDITION: Evaluate sections below ONLY if a task executes, modifies, or creates code/schemas. Bypass for read-only lookups, explanations, or status queries to optimize token cache.]
+
+- **Universal Validation Rules**: To ensure the system is production-grade at both Feature and Task levels:
   - Validate all configurations, incoming payloads, and input arguments at the boundary of execution.
   - Reject malformed or invalid inputs early with descriptive error messages and clean exit/status codes.
   - Design systems to be fail-safe; invalid or missing inputs must not trigger unhandled exceptions, panics, or resource leaks.
   - Write dedicated unit and integration tests covering invalid input ranges, boundary conditions, and error propagation pathways to verify validation coverage.
+  - **Artifact Integrity**: Zero dead code, unused dependencies, or lazy placeholders (`// TODO`, `FIXME`) are allowed in final deliverables.
+
+- **Feature Regression & Safety Guardrails**: To prevent new implementations from breaking the existing application state:
+  - **No Side Effects**: New features MUST NOT modify or break existing, unrelated data schemas, core APIs, or state management without explicit permission.
+  - **Regression Check**: Run and pass the project test suite via `task test` prior to moving a feature folder to the `completed` directory state. Zero regressions allowed.
+  - **Backward Compatibility**: All shared utilities, database structures, or core service extensions must maintain backward compatibility with the current live application.
+
+- **Feature Lifecycle Sign-Off Protocol**:
+  - **Handoff Block**: Upon completing 100% of a Feature's active task checkboxes inside `task.md`, halt processing and prevent auto-starting new modules. Output only this structural layout:
+    - Feature [Name] Status: COMPLETED
+    - Checklist Verification: [List each verification criterion with a PASS/FAIL status]
+    - CLI Execution Status: Execute `csh task complete <task_id>` for final structural synchronization.
+    - Next Action: Awaiting explicit user command to proceed.
 
 ## Boundaries
 
@@ -109,13 +125,16 @@ Work is strictly divided into two distinct, human-controlled operational phases:
   - Introducing a new workflow stage, skill, or phase agent.
 
 ## Tooling
-- **Go Toolchain**: Use standard Go commands for building and testing:
-  - Run all tests: `go test -v ./...`
-  - Run package tests: `go test -v ./internal/...`
-  - Format code: `go fmt ./...`
-  - Check static analysis: `go vet ./...`
-- **CLI Development**: Run the application directly using `go run cmd/cli/main.go`.
-- **Task Management**: Use `csh task add` to register new tasks and `csh task complete <task-id>` to mark tasks as completed.
+This project utilizes the Go toolchain and Task (Taskfile.yml) to standardize development workflows.
+
+- Task Runner: Use the task tool to run workflows:
+  - `task build` - Compiles the project binary to bin/resume-adaptation
+  - `task run` - Executes the application in development mode
+  - `task test` - Runs unit and integration tests with race detection
+  - `task lint` - Runs golangci-lint static analysis
+  - `task fmt` - Formats the code using gofmt and goimports
+  - `task tidy` - Cleans up and synchronizes dependencies in go.mod
+  - `task clean` - Discards temporary build outputs and profiles
 
 ## Documentation Standards
 
@@ -153,7 +172,3 @@ A command-line tool designed to dynamically adapt a candidate's resume to align 
 - **Separation of Concerns**: Keep CLI commands and UI view models (`cmd/` and `internal/ui/`) completely decoupled from core adaptation and parsing logic (`internal/adaptation/` and `internal/parser/`).
 - **Defensive API Calls**: Ensure all remote calls to Google Gemini API are protected with proper timeouts, retries, and context cancellation propagation.
 - **Fail-Safe Processing**: Provide user-friendly CLI errors and clean exit codes if parsing or adaptation fails (e.g., malformed PDF, invalid API key, network issues) rather than allowing panics.
-
-**Configured Workspace ID Format:**
-- Prefix: `RAFT`
-- Format: `0001` (e.g., `RAFT0001`)
