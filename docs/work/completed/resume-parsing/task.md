@@ -16,10 +16,10 @@ This document tracks all implementation tasks for the resume ingestion and parsi
   - **Acceptance Criteria**: Service reads local `.txt` and `.md` files, providing path validation and basic formatting.
   - **Dependencies**: RAFT0002
 
-- [ ] RAFT0004: Implement Gemini API PDF parsing with Structured Outputs
+- [x] RAFT0004: Implement Gemini API PDF parsing with Structured Outputs
   - **Acceptance Criteria**: Client function uploads/sends PDF bytes to Gemini API, requesting a structured response matching the `Resume` JSON schema.
   - **Dependencies**: RAFT0003
 
-- [ ] RAFT0005: Create parser verification tests
+- [x] RAFT0005: Create parser verification tests
   - **Acceptance Criteria**: Integration tests verify that sample TXT and PDF resumes are correctly parsed and unmarshaled.
   - **Dependencies**: RAFT0004

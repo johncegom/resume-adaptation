@@ -31,10 +31,10 @@ func TestResumeModelJSONRoundTrip(t *testing.T) {
 		},
 		Projects: []parser.ProjectInfo{
 			{
-				Name:         "Open Source CLI",
-				Role:         "Creator",
-				TechStack:    []string{"Go", "Cobra"},
-				Description:  "A CLI tool for resume adaptation.",
+				Name:        "Open Source CLI",
+				Role:        "Creator",
+				TechStack:   []string{"Go", "Cobra"},
+				Description: "A CLI tool for resume adaptation.",
 			},
 		},
 		Skills: []string{"Go", "Python", "Kubernetes"},
@@ -78,7 +78,6 @@ func TestResumeModelJSONRoundTrip(t *testing.T) {
 		t.Fatalf("Skills length: got %d, want %d", len(decoded.Skills), len(original.Skills))
 	}
 }
-
 
 func TestResumeModelRequiredFields(t *testing.T) {
 	r := parser.Resume{
@@ -149,4 +148,3 @@ func TestProjectInfoModelFields(t *testing.T) {
 		}
 	}
 }
-
