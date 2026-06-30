@@ -6,9 +6,11 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/joho/godotenv"
 	"github.com/johncegom/resume-adaptation/internal/parser"
 	"google.golang.org/genai"
 )
@@ -152,6 +154,7 @@ func TestPDFParser_Parse_SuccessMock(t *testing.T) {
 }
 
 func TestPDFParser_Parse_Live(t *testing.T) {
+	_ = godotenv.Load(filepath.Join("..", "..", ".env"))
 	apiKey := os.Getenv("GEMINI_API_KEY")
 	if apiKey == "" {
 		t.Skip("skipping live integration test: GEMINI_API_KEY environment variable not set")

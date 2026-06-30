@@ -5,13 +5,16 @@ package adaptation
 import (
 	"context"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/johncegom/resume-adaptation/internal/parser"
 )
 
 func TestService_Adapt_LiveIntegration(t *testing.T) {
+	_ = godotenv.Load(filepath.Join("..", "..", ".env"))
 	apiKey := os.Getenv("GEMINI_API_KEY")
 	if apiKey == "" {
 		t.Skip("skipping live integration test: GEMINI_API_KEY environment variable not set")
