@@ -35,6 +35,19 @@ A powerful command-line tool designed to dynamically adapt a candidate's resume 
 └── README.md             # Project Description and Usage
 ```
 
+## Configuration
+
+The application loads configuration settings from environment variables. In local development, you can use a `.env` file at the root of the project to manage these variables.
+
+1. Copy the example environment template file:
+   ```bash
+   cp .env.example .env
+   ```
+2. Open `.env` and set your credentials/options:
+   - `GEMINI_API_KEY`: Your Google Gemini API Key (required for resume parsing and adaptation).
+   - `LOG_LEVEL`: Optional. Logging verbosity (`debug`, `info`, `warn`, `error`).
+   - `LOG_FORMAT`: Optional. Format of log output (`text`, `json`).
+
 ## Developer Workflows
 
 This project uses [Task](https://taskfile.dev) to automate development workflows.

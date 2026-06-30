@@ -4,7 +4,7 @@ This file contains the **Rules and guidelines** for humans and LLMs working in t
 
 ## Getting Started (Agents)
 
-1. Load any needed skills. If you identify a missing skill that you can suggest from memory/context without needing a web search, propose it to the human first and ask for approval to install it using `npx skill`.
+1. Load any needed skills when user starting to work on a feature (epic). If you identify a missing skill that you can suggest from memory/context without needing a web search, propose it to the human first and ask for approval to install it using `npx skill`.
 2. Make the smallest reversible change. Follow TDD for code edits.
 3. When closing out, report: file changed, commands/tests run, checks skipped (with reasons), and links to affected code/docs/specs/tasks.
 4. MUST not use emojis / icons in markdown file.
