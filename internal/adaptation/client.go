@@ -89,3 +89,21 @@ func (c *Client) Model() string {
 func (c *Client) Timeout() time.Duration {
 	return c.timeout
 }
+
+// GenerateContent delegates Content generation to the underlying GenAI client models service,
+// enforcing the client's model and configured timeout.
+func (c *Client) GenerateContent(
+	ctx context.Context,
+	contents []*genai.Content,
+	config *genai.GenerateContentConfig,
+) (*genai.GenerateContentResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
+
+	resp, err := c.inner.Models.GenerateContent(ctx, c.model, contents, config)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate content: %w", err)
+	}
+
+	return resp, nil
+}

@@ -16,6 +16,8 @@ tasks:
 
   test:
     desc: Runs unit and integration tests with race detection
+    env:
+      GOCACHE: '{{.TASKFILE_DIR}}/.gocache'
     cmds:
       - go test -v -race ./... || go test -v ./...
 
@@ -41,6 +43,7 @@ tasks:
     cmds:
       - go clean -cache -testcache
       - rm -rf bin
+      - rm -rf .gocache
       - rm -f *.prof *.test *.out
 
   setup:

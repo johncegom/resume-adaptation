@@ -8,7 +8,7 @@ This document tracks all implementation tasks for the AI adaptation and alignmen
   - **Acceptance Criteria**: Client initializes successfully using the official SDK, reads `GEMINI_API_KEY` environment variable, and configures context timeouts.
   - **Dependencies**: None
 
-- [ ] RAFT0007: Implement job description analyzer
+- [x] RAFT0007: Implement job description analyzer
   - **Acceptance Criteria**: Service extracts core technical keywords and requirements from target job descriptions into a structured model.
   - **Dependencies**: RAFT0006
 

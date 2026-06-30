@@ -2,11 +2,22 @@ package adaptation
 
 import (
 	"context"
+	"io"
+	"net/http"
+	"strings"
 	"testing"
 	"time"
 
 	"google.golang.org/genai"
 )
+
+type mockTransport struct {
+	roundTrip func(*http.Request) (*http.Response, error)
+}
+
+func (m *mockTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	return m.roundTrip(req)
+}
 
 // fakeClientFactory returns a no-op genai.Client for unit tests that
 // need NewClient to succeed without making network calls.
@@ -77,5 +88,40 @@ func TestNewClient_default_timeout(t *testing.T) {
 
 	if c.Timeout() != 30*time.Second {
 		t.Fatalf("default timeout: got %v, want %v", c.Timeout(), 30*time.Second)
+	}
+}
+
+func TestClient_GenerateContent_Success(t *testing.T) {
+	t.Setenv("GEMINI_API_KEY", "test-key")
+
+	mockResponse := `{"candidates": [{"content": {"parts": [{"text": "Hello World"}]}}]}`
+
+	transport := &mockTransport{
+		roundTrip: func(req *http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusOK,
+				Body:       io.NopCloser(strings.NewReader(mockResponse)),
+				Header:     make(http.Header),
+			}, nil
+		},
+	}
+
+	c, err := NewClient(context.Background(), withFactory(func(ctx context.Context, config *genai.ClientConfig) (*genai.Client, error) {
+		config.HTTPClient = &http.Client{Transport: transport}
+		return genai.NewClient(ctx, config)
+	}))
+	if err != nil {
+		t.Fatalf("unexpected error creating client: %v", err)
+	}
+
+	resp, err := c.GenerateContent(context.Background(), []*genai.Content{
+		{Parts: []*genai.Part{{Text: "Test Prompt"}}},
+	}, nil)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if len(resp.Candidates) == 0 || resp.Candidates[0].Content.Parts[0].Text != "Hello World" {
+		t.Fatalf("unexpected response: %+v", resp)
 	}
 }
