@@ -2,6 +2,7 @@ package adaptation
 
 import (
 	"context"
+	_ "embed"
 	"encoding/json"
 	"fmt"
 
@@ -14,6 +15,9 @@ type JobAnalysis struct {
 	Responsibilities []string `json:"responsibilities"`
 	Requirements     []string `json:"requirements"`
 }
+
+//go:embed prompts/job_analysis_prompt.md
+var jobAnalysisPromptTemplate string
 
 var jobAnalysisSchema = &genai.Schema{
 	Type: genai.TypeObject,
@@ -53,13 +57,7 @@ func (a *JobAnalyzer) Analyze(ctx context.Context, jobDescription string) (*JobA
 		return nil, fmt.Errorf("job description cannot be empty")
 	}
 
-	prompt := fmt.Sprintf(`Analyze the following job description and extract:
-1. Core technical keywords, programming languages, technologies, and skills.
-2. Main responsibilities and daily duties of the role.
-3. Minimum and preferred requirements, experience, and qualifications.
-
-Job Description:
-%s`, jobDescription)
+	prompt := fmt.Sprintf(jobAnalysisPromptTemplate, jobDescription)
 
 	contents := []*genai.Content{
 		{Parts: []*genai.Part{{Text: prompt}}},
