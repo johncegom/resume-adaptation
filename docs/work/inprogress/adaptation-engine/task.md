@@ -16,7 +16,7 @@ This document tracks all implementation tasks for the AI adaptation and alignmen
   - **Acceptance Criteria**: Rewrites resume experience summaries and skills list to highlight matching keywords while maintaining exact truthfulness.
   - **Dependencies**: RAFT0007
 
-- [ ] RAFT0009: Combine components into a unified Adaptation Service
+- [x] RAFT0009: Combine components into a unified Adaptation Service
   - **Acceptance Criteria**: Orchestrator maps the full input (Resume + Job Description) to the adapted Resume output.
   - **Dependencies**: RAFT0008
 
