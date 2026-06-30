@@ -21,6 +21,13 @@ tasks:
     cmds:
       - go test -v -race ./... || go test -v ./...
 
+  test:integration:
+    desc: Runs live integration tests (requires GEMINI_API_KEY)
+    env:
+      GOCACHE: '{{.TASKFILE_DIR}}/.gocache'
+    cmds:
+      - go test -v -tags=integration ./...
+
   lint:
     desc: Runs golangci-lint static analysis
     cmds:

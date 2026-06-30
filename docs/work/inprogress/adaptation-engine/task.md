@@ -20,6 +20,6 @@ This document tracks all implementation tasks for the AI adaptation and alignmen
   - **Acceptance Criteria**: Orchestrator maps the full input (Resume + Job Description) to the adapted Resume output.
   - **Dependencies**: RAFT0008
 
-- [ ] RAFT0010: Write integration and unit tests for adaptation logic
+- [x] RAFT0010: Write integration and unit tests for adaptation logic
   - **Acceptance Criteria**: Automated test cases verify the analyzer, adapter, and client error pathways.
   - **Dependencies**: RAFT0009

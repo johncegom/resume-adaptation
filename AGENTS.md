@@ -105,6 +105,9 @@ Work is strictly divided into two distinct, human-controlled operational phases:
 - **Feature Regression & Safety Guardrails**: To prevent new implementations from breaking the existing application state:
   - **No Side Effects**: New features MUST NOT modify or break existing, unrelated data schemas, core APIs, or state management without explicit permission.
   - **Regression Check**: Run and pass the project test suite via `task test` prior to moving a feature folder to the `completed` directory state. Zero regressions allowed.
+  - **Live Integration Tests**: Running live integration tests (`task test:integration`) is mandatory in the following scenarios:
+    1. **Before Commits or Merges (Manual Pre-flight)**: Before staging a final commit or merging a feature to `main`, to verify that our prompt, Go structures, and the live Gemini API are working in perfect harmony.
+    2. **When tuning prompts or response schemas**: If we modify any JSON schema or prompt template (e.g. in `job_analysis_prompt.md`), to confirm the model does not fail to unmarshal into our Go structs.
   - **Backward Compatibility**: All shared utilities, database structures, or core service extensions must maintain backward compatibility with the current live application.
 
 - **Feature Lifecycle Sign-Off Protocol**:
@@ -130,7 +133,8 @@ This project utilizes the Go toolchain and Task (Taskfile.yml) to standardize de
 - Task Runner: Use the task tool to run workflows:
   - `task build` - Compiles the project binary to bin/resume-adaptation
   - `task run` - Executes the application in development mode
-  - `task test` - Runs unit and integration tests with race detection
+  - `task test` - Runs fast unit tests with race detection (excludes integration tests)
+  - `task test:integration` - Runs live integration tests (requires GEMINI_API_KEY)
   - `task lint` - Runs golangci-lint static analysis
   - `task fmt` - Formats the code using gofmt and goimports
   - `task tidy` - Cleans up and synchronizes dependencies in go.mod
