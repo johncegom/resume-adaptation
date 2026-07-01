@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/joho/godotenv"
 )
@@ -15,6 +18,13 @@ func setupEnv() {
 func main() {
 	setupEnv()
 
-	fmt.Println("Resume Adaptation CLI")
-	os.Exit(0)
+	// Capture interrupt signals for graceful terminal cleanup
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	cmd := NewRootCommand()
+	if err := cmd.ExecuteContext(ctx); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
 }
